@@ -5,6 +5,9 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { requireAuth } = require("../middleware/authMiddleware");
+const filesPayloadExists = require("../middleware/filesPayloadExists");
+const fileExtLimiter = require("../middleware/fileExtLimiter");
+const fileSizeLimiter = require("../middleware/fileSizeLimiter");
 require("dotenv").config();
 const pass = require("../passport-config");
 const sendMail = require("../sendMail");
@@ -27,7 +30,6 @@ const session = require("express-session");
 //   console.log(user);
 //   return user;
 // });
-
 
 // Define Multer
 
@@ -319,8 +321,11 @@ router.post("/logout", (req, res) => {
 //User Photo Update
 router.patch(
   "/user-photo-update",
+  upload.any,
+  filesPayloadExists,
+  fileExtLimiter([".png", ".jpg", ".jpeg", ".gif"]),
+  fileSizeLimiter,
   requireAuth,
-  upload.single("personalphoto"),
   async (req, res) => {
     console.log(req.file);
     console.log(req.body);
