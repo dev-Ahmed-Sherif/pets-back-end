@@ -3,7 +3,7 @@ const User = require("../models/User");
 require("dotenv").config();
 
 const requireAuth = (req, res, next) => {
-  const token = req.cookies.clubToken;
+  const token = req.cookies.authToken;
 
   if (token) {
     jwt.verify(
