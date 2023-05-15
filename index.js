@@ -1,30 +1,41 @@
+// Get the Variables from .env
+require("dotenv").config();
+
 // Design Server
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const corsOptions = require("./config/corsOptions");
+const credentials = require("./middleware/credentials");
 const cookieParser = require("cookie-parser");
+const errorHandler = require("./middleware/errorHandler");
+const requireAuth = require("./middleware/authMiddleware");
 const session = require("express-session");
-// Call Mongo DB Connection
-const mongo = require("./api/config/mongoose");
-
 const passport = require("passport");
-require("./api/passport-config");
+require("./helper/passport-config");
 
-// Define Routes
-const userRouter = require("./api/routes/userRoutes");
-const clubRouter = require("./api/routes/clubRoutes");
+// Call Mongo DB Connection
+const mongo = require("./config/mongoose");
 
-// middleware
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true,
-  })
-);
-// app.use((req, res, next) => {
-//   res.set("Access-Control-Allow-Origin", "*");
-//   next();
-// });
+// Handle options credentials check - before CORS!
+// and fetch cookies credentials requirement
+app.use(credentials);
+
+// Cross Origin Resource Sharing
+app.use(cors(corsOptions));
+
+// built-in middleware to handle urlencoded form data
+app.use(express.urlencoded({ extended: false }));
+
+// built-in middleware for json
+app.use(express.json());
+
+//middleware for cookies
+app.use(cookieParser());
+
+app.use("/public/products", express.static("public/products"));
+app.use("/public/person", express.static("public/person"));
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -32,28 +43,29 @@ app.use(
     saveUninitialized: false,
   })
 );
-app.use(express.json());
-app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
-
-app.use("/public/club", express.static("public/club"));
-app.use("/public/person", express.static("public/person"));
-
-app.use("/api/v1/users", userRouter);
-app.use("/api/v1/clubs", clubRouter);
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Define Routes
+
+app.use("/register", require("./routes/register"));
+app.use("/login", require("./routes/auth"));
+app.use("/refresh", require("./routes/refresh"));
+app.use("/logout", require("./routes/logout"));
+
+app.use(requireAuth);
+
+// app.use("/api/users", userRouter);
+// app.use("/api/products", productRouter);
+
+// Handle Server Error
+app.use(errorHandler);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log("running on", process.env.PORT);
 });
 
 app.get("/", (req, res) => {
-  res.send("hello");
+  res.send("Welcome to Server 🙋🙋🙋");
 });
-
-//  Old
-// App.listen(3000, () => {
-//   console.log("running");
-// });

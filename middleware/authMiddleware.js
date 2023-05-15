@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const User = require("../model/User");
 require("dotenv").config();
 
 const requireAuth = (req, res, next) => {
-  const token = req.cookies.authToken;
+  const token = req.cookies.auth;
 
   if (token) {
     jwt.verify(
@@ -25,4 +25,4 @@ const requireAuth = (req, res, next) => {
   }
 };
 
-module.exports = { requireAuth };
+module.exports = requireAuth;

@@ -2,32 +2,27 @@ const mongoose = require("mongoose");
 
 const clubSchema = new mongoose.Schema(
   {
-    playgroundname: {
+    title: {
       type: String,
       require: true,
     },
-    photoURL: {
-      type: String,
-    },
-    address: {
+    description: {
       type: String,
       require: true,
     },
-    phonenumber: {
+    price: {
+      type: Number,
+      require: true,
+    },
+    discount: {
+      type: Number,
+      require: true,
+    },
+    productImg: {
       type: String,
       require: true,
     },
-    vodafonnumber: {
-      type: String,
-      require: true,
-    },
-    requests: {
-      type: Array,
-    },
-    table: {
-      type: Array,
-    },
-    createdDate: {
+    addedDate: {
       type: String,
     },
   },
@@ -36,5 +31,5 @@ const clubSchema = new mongoose.Schema(
     strict: false,
   }
 );
-club = mongoose.model("clubs", clubSchema);
+club = mongoose.model("products", clubSchema);
 module.exports = club;

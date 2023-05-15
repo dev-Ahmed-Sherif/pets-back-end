@@ -2,11 +2,7 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    firstname: {
-      type: String,
-      require: true,
-    },
-    lastname: {
+    username: {
       type: String,
       require: true,
     },
@@ -20,14 +16,21 @@ const userSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
+    role: {
+      User: {
+        type: Number,
+        default: 2001,
+      },
+      Editor: Number,
+      Admin: Number,
+    },
     number: {
       type: String,
-      require: true,
     },
     personalphoto: {
       type: String,
     },
-    userplaygrounds: [{ type: mongoose.Types.ObjectId, ref: "clubs" }],
+    refreshToken: [String],
     dateRegister: {
       type: String,
     },
